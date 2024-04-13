@@ -44,15 +44,13 @@ public class TaskManager {
         return epics.get(id);
     }
     public List<Subtask> getSubtasksByEpicId(int epicId) {
-        Epic epic = epics.get(epicId);
-
-        return epic.getSubtaskIds().stream()
-                .map(subtasks::get)
+        return subtasks.values().stream()
+                .filter(subtask -> subtask.getEpic().getId() == epicId)
                 .toList();
     }
 
     public Iterable<Task> getAllTasks() {
-        return tasks.values();
+        return new ArrayList<Task>(tasks.values());
     }
 
     public Iterable<Epic> getAllEpics() {
@@ -81,10 +79,15 @@ public class TaskManager {
         tasks.clear();
     }
     public void deleteAllEpic() {
+        subtasks.clear();
         epics.clear();
     }
     public void deleteAllSubtask() {
         subtasks.clear();
+        epics.values().forEach(epic -> {
+            epic.getSubtaskIds().clear();
+            epic.setStatus(TaskStatus.NEW);
+        });
     }
 
     public void deleteById(int id) {
