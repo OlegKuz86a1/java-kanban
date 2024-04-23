@@ -3,119 +3,44 @@ package service;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-import model.TaskStatus;
+import java.util.List;
 
-import java.util.*;
+public interface TaskManager {
+    Task create(Task task);
 
-public class TaskManager {
+    Epic createEpic(Epic epic);
 
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private int generatorId;
+    Subtask createSubtask(Subtask subtask);
 
-    public Task create(Task task) {
-        task.setId(++generatorId);
-        tasks.put(task.getId(), task);
-        return task;
-    }
+    Task getById(int id);
 
-    public Epic createEpic(Epic epic) {
-        epic.setId(++generatorId);
-        epics.put(epic.getId(), epic);
-        epic.setStatus(defineStatus(epic.getSubtaskIds()));
-        return epic;
-    }
+    Epic getByIDEpic(int id);
 
-    public Subtask createSubtask(Subtask subtask) {
-        subtask.setId(++generatorId);
-        subtasks.put(subtask.getId(), subtask);
-        Epic epic = subtask.getEpic();
-        Set<Integer> subtaskIds = epic.getSubtaskIds();
-        subtaskIds.add(subtask.getId());
-        epic.setStatus(defineStatus(subtaskIds));
-        return subtask;
-    }
+    List<Subtask> getSubtasksByEpicId(int epicId);
 
-    public Task getById(int id) {
-        return tasks.get(id);
-    }
-    public Epic getByIDEpic(int id) {
-        return epics.get(id);
-    }
-    public List<Subtask> getSubtasksByEpicId(int epicId) {
-        return subtasks.values().stream()
-                .filter(subtask -> subtask.getEpic().getId() == epicId)
-                .toList();
-    }
+    Iterable<Task> getAllTasks();
 
-    public Iterable<Task> getAllTasks() {
-        return new ArrayList<Task>(tasks.values());
-    }
+    Iterable<Epic> getAllEpics();
 
-    public Iterable<Epic> getAllEpics() {
-          return epics.values();
-    }
+    Iterable<Subtask> getAllSubtasks();
 
-    public Iterable<Subtask> getAllSubtasks() {
-        return subtasks.values();
-    }
+    void update(Task task);
 
-    public void update(Task task) {
-        tasks.put(task.getId(), task);
-    }
+    void updateEpic(Epic epic);
 
-    public void updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
-    }
+    void updateSubtask(Subtask subtask);
 
-    public void updateSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        Epic epic = subtask.getEpic();
-        epic.setStatus(defineStatus(epic.getSubtaskIds()));
-    }
+    void deleteAll();
 
-    public void deleteAll() {
-        tasks.clear();
-    }
-    public void deleteAllEpic() {
-        subtasks.clear();
-        epics.clear();
-    }
-    public void deleteAllSubtask() {
-        subtasks.clear();
-        epics.values().forEach(epic -> {
-            epic.getSubtaskIds().clear();
-            epic.setStatus(TaskStatus.NEW);
-        });
-    }
+    void deleteAllEpic();
 
-    public void deleteById(int id) {
-        Task removedTask = tasks.remove(id);
-    }
+    void deleteAllSubtask();
 
-    public void deleteByIdEpic(int id) {
-        Epic epic = epics.remove(id);
-        epic.getSubtaskIds().forEach(subtasks::remove);
-    }
+    void deleteById(int id);
 
-    public void deleteByIdSubtask(int id) {
-        Subtask removedSubtask = subtasks.remove(id);
-        Epic epic = removedSubtask.getEpic();
-        epic.getSubtaskIds().remove(id);
-        epic.setStatus(defineStatus(epic.getSubtaskIds()));
-    }
+    void deleteByIdEpic(int id);
 
-    private TaskStatus defineStatus(Set<Integer> subtaskIds) {
-        if (subtaskIds == null || subtaskIds.isEmpty()) {
-            return TaskStatus.NEW;
-        }
-
-        List<TaskStatus> statuses = subtaskIds.stream()
-                .map(id -> subtasks.get(id).getStatus())
-                .distinct()
-                .toList();
-
-        return statuses.size() == 1 ? statuses.getFirst() : TaskStatus.IN_PROGRESS;
-    }
+    void deleteByIdSubtask(int id);
 }
+
+
