@@ -7,6 +7,7 @@ import model.TaskStatus;
 
 import java.util.*;
 
+
 public class InMemoryTaskManager implements TaskManager {
 
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -15,6 +16,9 @@ public class InMemoryTaskManager implements TaskManager {
     private int generatorId;
 
 
+    public LinkedList<Task> getHistory() {
+        return new LinkedList<>(Managers.getDefaultHistory().getHistory());
+    }
 
 
     @Override
@@ -70,17 +74,17 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public Iterable<Task> getAllTasks() {
+    public List<Task> getAllTasks() {
         return new ArrayList<Task>(tasks.values());
     }
 
     @Override
-    public Iterable<Epic> getAllEpics() {
+    public List<Epic> getAllEpics() {
         return new ArrayList<Epic>(epics.values());
     }
 
     @Override
-    public Iterable<Subtask> getAllSubtasks() {
+    public List<Subtask> getAllSubtasks() {
         return new ArrayList<Subtask>(subtasks.values());
     }
 
@@ -152,5 +156,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         return statuses.size() == 1 ? statuses.getFirst() : TaskStatus.IN_PROGRESS;
     }
+
 }
 

@@ -3,6 +3,8 @@ package service;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+
+import java.util.LinkedList;
 import java.util.List;
 
 public interface TaskManager {
@@ -18,11 +20,11 @@ public interface TaskManager {
 
     List<Subtask> getSubtasksByEpicId(int epicId);
 
-    Iterable<Task> getAllTasks();
+    List<Task> getAllTasks();
 
-    Iterable<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
-    Iterable<Subtask> getAllSubtasks();
+    List<Subtask> getAllSubtasks();
 
     void update(Task task);
 
@@ -41,6 +43,8 @@ public interface TaskManager {
     void deleteByIdEpic(int id);
 
     void deleteByIdSubtask(int id);
+
+    LinkedList<Task> getHistory();
 }
 
 

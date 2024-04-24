@@ -2,13 +2,16 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
+import service.InMemoryHistoryManager;
 import service.InMemoryTaskManager;
 import service.Managers;
+import service.TaskManager;
 
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
+
 
         Task task1 = taskManager.create(new Task("Задача № 1", "Описание задачи 1", TaskStatus.NEW));
         Task task2 = taskManager.create(new Task("Задача № 2", "Описание задачи 2", TaskStatus.IN_PROGRESS));
@@ -37,10 +40,11 @@ public class Main {
         taskManager.getByIDEpic(10); //8
         taskManager.getSubtasksByEpicId(11); //9
         taskManager.getById(5); //10
-        System.out.println(Managers.getDefaultHistory().getHistory()); //проверяем список просмотров
+        System.out.println(taskManager.getHistory()); //проверяем список просмотров
         System.out.println();
         taskManager.getById(6); //11
-        System.out.println(Managers.getDefaultHistory().getHistory()); //проверяем список на изменения
+        System.out.println(taskManager.getHistory()); //проверяем список на изменения
+
 
     }
 }

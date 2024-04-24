@@ -6,12 +6,14 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-   private final LinkedList<Task> listTasks = new LinkedList<>();
+
+
+    private final LinkedList<Task> listTasks = new LinkedList<>();
 
 
     @Override
     public LinkedList<Task> getHistory() {
-        return listTasks;
+        return new LinkedList<>(listTasks);
     }
 
     @Override
@@ -20,6 +22,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             listTasks.removeFirst();
         }
         listTasks.add(task);
+
     }
 
 }
