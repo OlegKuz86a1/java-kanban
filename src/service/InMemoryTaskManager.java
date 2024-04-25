@@ -14,10 +14,16 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private int generatorId;
+    private final HistoryManager historyManager;
+    Managers managers = new Managers();
+
+    public InMemoryTaskManager(InMemoryHistoryManager historyManager){
+        this.historyManager = managers.getDefaultHistory();
+        }
 
 
     public LinkedList<Task> getHistory() {
-        return new LinkedList<>(Managers.getDefaultHistory().getHistory());
+        return new LinkedList<>(historyManager.getHistory());
     }
 
 
@@ -50,7 +56,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getById(int id) {
         Task task = tasks.get(id);
-        Managers.getDefaultHistory().add(task);
+        historyManager.add(task);
         return task;
 
     }
@@ -58,7 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getByIDEpic(int id) {
         Epic epic = epics.get(id);
-        Managers.getDefaultHistory().add(epic);
+        historyManager.add(epic);
         return epic;
     }
 
@@ -67,7 +73,7 @@ public class InMemoryTaskManager implements TaskManager {
         List<Subtask> filteredSubtasks = subtasks.values().stream()
                 .filter(subtask -> subtask.getEpic().getId() == epicId)
                 .toList();
-        filteredSubtasks.forEach(subtask -> Managers.getDefaultHistory().add(subtask));
+        filteredSubtasks.forEach(subtask -> historyManager.add(subtask));
         return filteredSubtasks;
 
     }

@@ -11,11 +11,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
+
     TaskManager inMemoryTaskManager;
+    HistoryManager historyManager;
+    Managers managers;
+
 
     @BeforeEach
     void beforeEach() {
-        inMemoryTaskManager = new InMemoryTaskManager();
+        managers = new Managers();
+        historyManager = managers.getDefaultHistory();
+        inMemoryTaskManager = managers.getDefault();
     }
 
     @Test

@@ -2,15 +2,13 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
-import service.InMemoryHistoryManager;
-import service.InMemoryTaskManager;
-import service.Managers;
-import service.TaskManager;
+import service.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = new InMemoryTaskManager();
+        InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+        TaskManager taskManager = new InMemoryTaskManager(historyManager);
 
 
         Task task1 = taskManager.create(new Task("Задача № 1", "Описание задачи 1", TaskStatus.NEW));

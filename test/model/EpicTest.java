@@ -3,16 +3,20 @@ package model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.HistoryManager;
+import service.InMemoryHistoryManager;
 import service.InMemoryTaskManager;
 import service.TaskManager;
 
-
 class EpicTest {
+
     TaskManager inMemoryTaskManager;
+    HistoryManager historyManager;
 
     @BeforeEach
     void beforeEach() {
-        inMemoryTaskManager = new InMemoryTaskManager();
+        historyManager = new InMemoryHistoryManager();
+        inMemoryTaskManager = new InMemoryTaskManager((InMemoryHistoryManager) historyManager);
     }
 
     @Test
