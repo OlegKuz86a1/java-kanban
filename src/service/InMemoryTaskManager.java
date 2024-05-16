@@ -16,7 +16,7 @@ public class InMemoryTaskManager implements TaskManager {
     private int generatorId;
     private final HistoryManager historyManager;
 
-    public InMemoryTaskManager(HistoryManager historyManager){
+    public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
         }
 
@@ -59,6 +59,7 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
 
     }
+
 
     @Override
     public Epic getByIDEpic(int id) {
