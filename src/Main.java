@@ -11,7 +11,7 @@ public class Main {
         TaskManager taskManager = new InMemoryTaskManager(historyManager);
 
 
-        Task task1 = taskManager.create(new Task("Задача № 1", "Описание задачи 1", TaskStatus.NEW));
+        Task task1 = taskManager.create(new Task(" № 1", "Описание задачи 1", TaskStatus.NEW));
         Task task2 = taskManager.create(new Task("Задача № 2", "Описание задачи 2", TaskStatus.IN_PROGRESS));
         Task task3 = taskManager.create(new Task("Задача № 3", "Описание задачи 3", TaskStatus.IN_PROGRESS));
         Task task4 = taskManager.create(new Task("Задача № 4", "Описание задачи 4", TaskStatus.NEW));
@@ -31,17 +31,16 @@ public class Main {
         taskManager.getById(1); //1
         taskManager.getById(2); //2
         taskManager.getById(3); //3
-        taskManager.getById(4); //4
         taskManager.getById(5); //5
-        taskManager.getByIDEpic(1); //6
-        taskManager.getSubtasksByEpicId(7); //7
-        taskManager.getByIDEpic(10); //8
-        taskManager.getSubtasksByEpicId(11); //9
+        taskManager.getSubtasksByEpicId(10); //7
+       taskManager.getByIDEpic(10); //8
+        taskManager.getSubtasksByEpicId(10); //9
         taskManager.getById(5); //10
+        taskManager.getById(1);
+        taskManager.getByIDEpic(10);
+
         System.out.println(taskManager.getHistory()); //проверяем список просмотров
-        System.out.println();
-        taskManager.getById(6); //11
-        System.out.println(taskManager.getHistory()); //проверяем список на изменения
+
 
 
     }

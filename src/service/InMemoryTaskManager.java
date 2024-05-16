@@ -22,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     public LinkedList<Task> getHistory() {
-        return new LinkedList<>(historyManager.getHistory());
+        return new LinkedList<>(historyManager.getAll());
     }
 
 
@@ -72,6 +72,7 @@ public class InMemoryTaskManager implements TaskManager {
         List<Subtask> filteredSubtasks = subtasks.values().stream()
                 .filter(subtask -> subtask.getEpic().getId() == epicId)
                 .toList();
+
         filteredSubtasks.forEach(subtask -> historyManager.add(subtask));
         return filteredSubtasks;
 
