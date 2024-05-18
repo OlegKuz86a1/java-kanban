@@ -30,6 +30,7 @@ public class Main {
         taskManager.getById(5); //5
         taskManager.getSubtasksByEpicId(10); //7
        taskManager.getByIDEpic(10); //8
+        taskManager.getByIDEpic(10);
         taskManager.getSubtasksByEpicId(10); //9
         taskManager.getById(5); //10
         taskManager.getById(1);

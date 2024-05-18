@@ -10,19 +10,19 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private static class Node {
 
-        Node next;
-        Task item;
-        Node prev;
+       private Node next;
+       private Task item;
+       private Node prev;
 
-        public Node(Node prev,Task item, Node next) {
+        public Node(Node prev, Task item, Node next) {
             this.prev = prev;
             this.item = item;
             this.next = next;
         }
     }
 
-    Node first;
-    Node last;
+    private Node first;
+    private Node last;
 
     @Override
     public List<Task> getAll() {
@@ -39,15 +39,17 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
 
-        if (task != null) {
-
-            if (history.containsKey(task.getId())) {
-                remove(task.getId());
-            }
-
-            linkLast(task);
-            history.put(task.getId(), last);
+        if (task == null) {
+            return;
         }
+
+        if (history.containsKey(task.getId())) {
+            remove(task.getId());
+        }
+
+        linkLast(task);
+        history.put(task.getId(), last);
+
     }
 
     @Override
@@ -60,8 +62,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void linkLast(Task task) {
-        final  Node l = last;
-        final  Node newNode = new Node(last, task, null);
+        final Node l = last;
+        final Node newNode = new Node(last, task, null);
         last = newNode;
 
         if (l == null) {
@@ -73,18 +75,17 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private void removeNode(Node node) {
 
-        if (node != null) {
-
-            if (node.prev != null) {
-                node.prev.next = node.next;
-            } else {
-                first = node.next;
-
-                if (first != null) {
-                    first.prev = node;
-                }
-            }
-            history.remove(node.item.getId());
+        if (node == null || node.next == null) {
+            return;
         }
+        if (node.prev != null) {
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+        } else {
+            first = node.next;
+            first.prev = null;
+        }
+        history.remove(node.item.getId());
     }
 }
+
