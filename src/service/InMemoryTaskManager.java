@@ -16,13 +16,13 @@ public class InMemoryTaskManager implements TaskManager {
     private int generatorId;
     private final HistoryManager historyManager;
 
-    public InMemoryTaskManager(HistoryManager historyManager){
+    public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
         }
 
 
     public LinkedList<Task> getHistory() {
-        return new LinkedList<>(historyManager.getHistory());
+        return new LinkedList<>(historyManager.getAll());
     }
 
 
@@ -60,6 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
+
     @Override
     public Epic getByIDEpic(int id) {
         Epic epic = epics.get(id);
@@ -72,6 +73,7 @@ public class InMemoryTaskManager implements TaskManager {
         List<Subtask> filteredSubtasks = subtasks.values().stream()
                 .filter(subtask -> subtask.getEpic().getId() == epicId)
                 .toList();
+
         filteredSubtasks.forEach(subtask -> historyManager.add(subtask));
         return filteredSubtasks;
 
