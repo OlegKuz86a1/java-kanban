@@ -1,0 +1,12 @@
+ID, TYPE, NAME, STATUS, DESCRIPTION, EPIC
+1,TASK,Задача № 1,NEW,Описание задачи 1,null
+2,TASK,Задача № 2,IN_PROGRESS,Описание задачи 2,null
+3,TASK,Задача № 3,IN_PROGRESS,Описание задачи 3,null
+4,TASK,Задача № 4,NEW,Описание задачи 4,null
+5,TASK,Задача № 5,IN_PROGRESS,Описание задачи 5,null
+6,TASK,Задача № 6,NEW,Описание задачи 6,null
+7,EPIC,Первый эпик,IN_PROGRESS,описание,null
+8,SUBTASK,Первая подзадача первого эпика,NEW,описание подзадачи,7
+9,SUBTASK,Вторая подзадача первого эпика,IN_PROGRESS,описание второй подзадачи,7
+10,EPIC,Второй эпик,IN_PROGRESS,описание вторового эпика,null
+11,SUBTASK,Первая подзадача второго эпика,IN_PROGRESS,описание третьей подзадачи,10

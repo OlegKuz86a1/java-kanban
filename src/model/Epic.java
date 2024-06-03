@@ -10,6 +10,19 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description);
     }
+    public Epic (String name, String description, int id, TaskStatus status) {
+        super(name, description, id, status);
+    }
+
+    @Override
+    public Integer getEpicId() {
+        return null;
+    }
+
+    @Override
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
+    }
 
     @Override
     public TaskStatus getStatus() {

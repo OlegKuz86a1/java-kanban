@@ -20,6 +20,34 @@ public class Task {
         this.status = status;
     }
 
+    public Task(String name, String description, int id, TaskStatus status) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
+    }
+
+    public Integer getEpicId() {
+        return null;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public int getId() {
+        return id;
+    }
+    public TaskType getTaskType() {
+        return TaskType.TASK;
+    }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -34,14 +62,6 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public TaskStatus getStatus() {
-        return status;
     }
 
     @Override
