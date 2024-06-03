@@ -30,6 +30,7 @@ public class Task {
     public Integer getEpicId() {
         return null;
     }
+
     public String getName() {
         return name;
     }
@@ -37,9 +38,11 @@ public class Task {
     public String getDescription() {
         return description;
     }
+
     public int getId() {
         return id;
     }
+
     public TaskType getTaskType() {
         return TaskType.TASK;
     }

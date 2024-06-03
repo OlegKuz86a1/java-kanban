@@ -13,6 +13,7 @@ public class Subtask extends Task {
         super(name, description, id, status);
         this.epic = epic;
     }
+
     @Override
     public Integer getEpicId() {
         return epic.getId();
@@ -21,6 +22,7 @@ public class Subtask extends Task {
     public Epic getEpic() {
         return epic;
     }
+
     @Override
     public TaskType getTaskType() {
         return TaskType.SUBTASK;
