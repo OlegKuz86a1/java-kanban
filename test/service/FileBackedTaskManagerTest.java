@@ -31,9 +31,7 @@ public class FileBackedTaskManagerTest {
         taskManagerBefore.saveInFile();
         taskManagerBefore.deleteAll();
 
-        InMemoryHistoryManager historyManagerAfter = new InMemoryHistoryManager();
-        FileBackedTaskManager taskManagerAfter = new FileBackedTaskManager(historyManagerAfter, tempFile);
-        taskManagerAfter.loadFromFile();
+        FileBackedTaskManager taskManagerAfter = FileBackedTaskManager.loadFromFile(tempFile);
 
         assertTrue(Files.exists(tempFile));
         assertTrue(taskManagerAfter.getAllTasks().isEmpty());
@@ -55,9 +53,7 @@ public class FileBackedTaskManagerTest {
         assertTrue(Files.exists(tempFile));
         assertFalse(taskManagerBefore.getAllTasks().isEmpty());
 
-        InMemoryHistoryManager historyManagerAfter = new InMemoryHistoryManager();
-        FileBackedTaskManager taskManagerAfter = new FileBackedTaskManager(historyManagerAfter, tempFile);
-        taskManagerAfter.loadFromFile();
+        FileBackedTaskManager taskManagerAfter = FileBackedTaskManager.loadFromFile(tempFile);
 
         assertTrue(Files.exists(tempFile));
         assertFalse(taskManagerAfter.getAllTasks().isEmpty());

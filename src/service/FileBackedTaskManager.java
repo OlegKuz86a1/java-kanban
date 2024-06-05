@@ -7,17 +7,12 @@ import model.*;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static model.TaskType.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    Path path;
-    TaskConverter taskConverter = new TaskConverter();
-    Map<Integer, Task> fileTasks = new HashMap<>();
+    private  Path path;
 
     public FileBackedTaskManager(HistoryManager historyManager, Path path) {
         super(historyManager);
@@ -28,21 +23,36 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super(historyManager);
     }
 
+
+
     public void saveInFile() {
         try (final BufferedWriter writer = new BufferedWriter(new FileWriter(String.valueOf(path)))) {
             writer.write("ID, TYPE, NAME, STATUS, DESCRIPTION, EPIC");
             writer.newLine();
-            for (Map.Entry<Integer, Task> entry : fileTasks.entrySet()) {
 
-                writer.write(taskConverter.taskInFiletoString(entry.getValue()));
+            for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
+                writer.write(TaskConverter.taskInFiletoString(entry.getValue()));
                 writer.newLine();
             }
+
+            for (Map.Entry<Integer, Epic> entry : epics.entrySet()) {
+                writer.write(TaskConverter.taskInFiletoString(entry.getValue()));
+                writer.newLine();
+            }
+
+            for (Map.Entry<Integer, Subtask> entry : subtasks.entrySet()) {
+                writer.write(TaskConverter.taskInFiletoString(entry.getValue()));
+                writer.newLine();
+            }
+
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());
         }
     }
 
-    public void loadFromFile() {
+    static FileBackedTaskManager loadFromFile(Path path) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(new InMemoryHistoryManager(), path);
+
         try (BufferedReader reader = new BufferedReader(new FileReader(String.valueOf(path)))) {
             String line;
             reader.readLine();
@@ -60,32 +70,33 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 String description = fields[4];
                 Epic epic = null;
                 if (taskType == SUBTASK) {
-                    epic = epics.get(Integer.parseInt(fields[5]));
+                    epic = manager.epics.get(Integer.parseInt(fields[5]));
                 }
                 switch (taskType) {
                     case TASK:
-                        tasks.put(id, new Task(name, description, id, taskStatus));
+                        manager.tasks.put(id, new Task(name, description, id, taskStatus));
                         break;
                     case EPIC:
-                        epics.put(id, new Epic(name, description, id, taskStatus));
+                        manager.epics.put(id, new Epic(name, description, id, taskStatus));
                         break;
                     case SUBTASK:
-                        subtasks.put(id, new Subtask(name, description, id, taskStatus, epic));
+                        manager.subtasks.put(id, new Subtask(name, description, id, taskStatus, epic));
                         break;
                     default:
                         throw new ManagerLoadException("Unsupported task type: " + taskType);
                 }
             }
-            generatorId = idMax++;
+            manager.generatorId = idMax++;
+
         } catch (IOException e) {
             throw new ManagerLoadException("Failed to load tasks from file");
         }
+        return manager;
     }
 
     @Override
     public Task create(Task task) {
         Task createdTask = super.create(task);
-        fileTasks.put(task.getId(), task);
         saveInFile();
         return createdTask;
     }
@@ -93,7 +104,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Epic createEpic(Epic epic) {
         Epic createdEpic = super.createEpic(epic);
-        fileTasks.put(epic.getId(), epic);
         saveInFile();
         return createdEpic;
     }
@@ -101,7 +111,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Subtask createSubtask(Subtask subtask) {
         Subtask createdSubtask = super.createSubtask(subtask);
-        fileTasks.put(subtask.getId(), subtask);
         saveInFile();
         return createdSubtask;
     }
@@ -109,21 +118,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void update(Task task) {
         super.update(task);
-        fileTasks.put(task.getId(), task);
         saveInFile();
     }
 
     @Override
     public void updateEpic(Epic epic) {
         super.updateEpic(epic);
-        fileTasks.put(epic.getId(), epic);
         saveInFile();
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
         super.updateSubtask(subtask);
-        fileTasks.put(subtask.getId(), subtask);
         Epic epic = subtask.getEpic();
         epic.setStatus(defineStatus(epic.getSubtaskIds()));
         saveInFile();
@@ -132,67 +138,37 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void deleteAll() {
         super.deleteAll();
-        List<Map.Entry<Integer, Task>> entriesToRemove = new ArrayList<>();
-        for (Map.Entry<Integer, Task> entry : fileTasks.entrySet()) {
-            if (entry.getValue().getClass() == Task.class) {
-                entriesToRemove.add(entry);
-            }
-        }
-        for (Map.Entry<Integer, Task> entry : entriesToRemove) {
-            fileTasks.remove(entry.getKey());
-        }
         saveInFile();
     }
 
     @Override
     public void deleteAllEpic() {
         super.deleteAllEpic();
-        List<Map.Entry<Integer, Task>> entriesToRemove = new ArrayList<>();
-        for (Map.Entry<Integer, Task> entry : fileTasks.entrySet()) {
-            if (entry.getValue().getClass() == Epic.class) {
-                entriesToRemove.add(entry);
-            }
-        }
-        for (Map.Entry<Integer, Task> entry : entriesToRemove) {
-            fileTasks.remove(entry.getKey());
-        }
+
         saveInFile();
     }
 
     @Override
     public void deleteAllSubtask() {
         super.deleteAllSubtask();
-        List<Map.Entry<Integer, Task>> entriesToRemove = new ArrayList<>();
-        for (Map.Entry<Integer, Task> entry : fileTasks.entrySet()) {
-            if (entry.getValue().getClass() == Subtask.class) {
-                entriesToRemove.add(entry);
-            }
-        }
-        for (Map.Entry<Integer, Task> entry : entriesToRemove) {
-            fileTasks.remove(entry.getKey());
-        }
         saveInFile();
     }
 
     @Override
     public void deleteById(int id) {
         super.deleteById(id);
-        fileTasks.remove(id);
         saveInFile();
     }
 
     @Override
     public void deleteByIdEpic(int id) {
         super.deleteByIdEpic(id);
-        Epic epic = (Epic) fileTasks.remove(id);
-        epic.getSubtaskIds().forEach(fileTasks::remove);
         saveInFile();
     }
 
     @Override
     public void deleteByIdSubtask(int id) {
         super.deleteByIdSubtask(id);
-        fileTasks.remove(id);
         saveInFile();
     }
 }
