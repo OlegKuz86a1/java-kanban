@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public interface TaskManager {
+
     Task create(Task task);
 
     Epic createEpic(Epic epic);
@@ -45,6 +46,7 @@ public interface TaskManager {
     void deleteByIdSubtask(int id);
 
     LinkedList<Task> getHistory();
+
 }
 
 
