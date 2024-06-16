@@ -176,7 +176,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStatus(TaskStatus.NEW);
             return;
         }
-        
+
         AtomicReference<LocalDateTime> startTime = new AtomicReference<>();
         AtomicReference<LocalDateTime> endTime = new AtomicReference<>();
         AtomicReference<Duration> totalDuration = new AtomicReference<>();
