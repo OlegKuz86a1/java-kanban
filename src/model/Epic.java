@@ -1,5 +1,7 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,13 +13,17 @@ public class Epic extends Task {
         super(name, description);
     }
 
-    public Epic(String name, String description, int id, TaskStatus status) {
-        super(name, description, id, status);
+    public Epic(Integer id, String name, String description, TaskStatus status, Duration duration, LocalDateTime startTime) {
+        super(id, name, description, status, duration, startTime);
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     @Override
-    public Integer getEpicId() {
-        return null;
+    public LocalDateTime getEndTime() {
+        return this.endTime;
     }
 
     @Override

@@ -27,6 +27,8 @@ public interface TaskManager {
 
     List<Subtask> getAllSubtasks();
 
+    List<Task> getPrioritizedTasks();
+
     void update(Task task);
 
     void updateEpic(Epic epic);

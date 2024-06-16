@@ -1,17 +1,34 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
 
-    private String name;
-    private String description;
+    private final String name;
+    private final String description;
     private Integer id;
     protected TaskStatus status;
+    private Duration duration;
+    private LocalDateTime startTime;
+    protected LocalDateTime endTime;
 
-    public Task(String name, String description) {
+    public Task(Integer id, String name, String description, TaskStatus status, Duration duration, LocalDateTime startTime) {
+        this.id = id;
         this.name = name;
         this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(String name, String description, TaskStatus status, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public Task(String name, String description, TaskStatus status) {
@@ -20,15 +37,29 @@ public class Task {
         this.status = status;
     }
 
-    public Task(String name, String description, int id, TaskStatus status) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.id = id;
-        this.status = status;
     }
 
-    public Integer getEpicId() {
-        return null;
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime != null ? startTime.plus(duration) : null;
     }
 
     public String getName() {
@@ -39,7 +70,7 @@ public class Task {
         return description;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -57,14 +88,6 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Override
@@ -86,6 +109,18 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
+                ", duration=" + duration +
+                ", start_time=" + startTime +
                 '}';
     }
+
+    public boolean doesIntersect(Task another) {
+        if (startTime == null || (id != null && id.equals(another.getId()))) {
+            return false;
+        }
+
+        return (!startTime.isBefore(another.getStartTime()) && !startTime.isAfter(another.getEndTime()))
+                    || (!getEndTime().isBefore(another.getStartTime()) && !getEndTime().isAfter(another.getEndTime()));
+    }
 }
+

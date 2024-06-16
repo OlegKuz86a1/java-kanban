@@ -7,12 +7,17 @@ import model.*;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.Map;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static model.TaskType.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private  Path path;
+    protected   Path path;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
 
     public FileBackedTaskManager(HistoryManager historyManager, Path path) {
         super(historyManager);
@@ -23,34 +28,29 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super(historyManager);
     }
 
-
-
     public void saveInFile() {
         try (final BufferedWriter writer = new BufferedWriter(new FileWriter(String.valueOf(path)))) {
-            writer.write("ID, TYPE, NAME, STATUS, DESCRIPTION, EPIC");
+            writer.write("ID, TYPE, NAME, STATUS, DESCRIPTION, EPIC, DURATION, START_TIME");
             writer.newLine();
 
-            for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
-                writer.write(TaskConverter.taskInFiletoString(entry.getValue()));
-                writer.newLine();
-            }
+            tasks.forEach((id, task) -> {
+                writeToFile(writer, task);
+            });
 
-            for (Map.Entry<Integer, Epic> entry : epics.entrySet()) {
-                writer.write(TaskConverter.taskInFiletoString(entry.getValue()));
-                writer.newLine();
-            }
+            epics.forEach((id, epic) -> {
+                writeToFile(writer, epic);
+            });
 
-            for (Map.Entry<Integer, Subtask> entry : subtasks.entrySet()) {
-                writer.write(TaskConverter.taskInFiletoString(entry.getValue()));
-                writer.newLine();
-            }
+            subtasks.forEach((id, subtask) -> {
+                writeToFile(writer, subtask);
+            });
 
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());
         }
     }
 
-    static FileBackedTaskManager loadFromFile(Path path) {
+    public static FileBackedTaskManager loadFromFile(Path path) {
         FileBackedTaskManager manager = new FileBackedTaskManager(new InMemoryHistoryManager(), path);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(String.valueOf(path)))) {
@@ -59,7 +59,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             int idMax = -1;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split(",");
-                if (fields.length < 5) {
+                if (fields.length < 8) {
                     throw new ManagerLoadException("Invalid line format: " + line);
                 }
                 int id = Integer.parseInt(fields[0]);
@@ -72,25 +72,36 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (taskType == SUBTASK) {
                     epic = manager.epics.get(Integer.parseInt(fields[5]));
                 }
-                switch (taskType) {
-                    case TASK:
-                        manager.tasks.put(id, new Task(name, description, id, taskStatus));
-                        break;
-                    case EPIC:
-                        manager.epics.put(id, new Epic(name, description, id, taskStatus));
-                        break;
-                    case SUBTASK:
-                        manager.subtasks.put(id, new Subtask(name, description, id, taskStatus, epic));
-                        break;
-                    default:
-                        throw new ManagerLoadException("Unsupported task type: " + taskType);
+                Duration duration = !fields[6].equals("null") ? Duration.parse(fields[6]) : null;
+                LocalDateTime startTime = !fields[7].equals("null") ? LocalDateTime.parse(fields[7], FORMATTER) : null;
+                Task taskFromFile = switch (taskType) {
+                    case TASK -> {
+                        Task task = new Task(id, name, description, taskStatus, duration, startTime);
+                        manager.tasks.put(id, task);
+                        yield task;
+                    }
+                    case EPIC -> {
+                        Epic task = new Epic(id, name, description, taskStatus, duration, startTime);
+                        manager.epics.put(id, task);
+                        yield task;
+                    }
+                    case SUBTASK -> {
+                        Subtask task = new Subtask(id, name, description, taskStatus, duration, startTime, epic);
+                        manager.subtasks.put(id, task);
+                        yield task;
+                    }
+                    default -> throw new ManagerLoadException("Unsupported task type: " + taskType);
+                };
+                if (!(taskFromFile instanceof Epic) && taskFromFile.getStartTime() != null) {
+                    manager.sortedTasks.add(taskFromFile);
                 }
             }
             manager.generatorId = idMax++;
-
         } catch (IOException e) {
             throw new ManagerLoadException("Failed to load tasks from file");
         }
+
+        reloadEpics(manager);
         return manager;
     }
 
@@ -131,7 +142,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public void updateSubtask(Subtask subtask) {
         super.updateSubtask(subtask);
         Epic epic = subtask.getEpic();
-        epic.setStatus(defineStatus(epic.getSubtaskIds()));
+        fillEpic(epic);
         saveInFile();
     }
 
@@ -170,5 +181,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public void deleteByIdSubtask(int id) {
         super.deleteByIdSubtask(id);
         saveInFile();
+    }
+
+    private static void reloadEpics(FileBackedTaskManager taskManager) {
+        taskManager.getAllEpics().forEach(epic -> {
+            AtomicReference<LocalDateTime> endTime = new AtomicReference<>();
+
+            taskManager.getAllSubtasks().stream()
+                    .filter(subtask -> Objects.equals(subtask.getEpicId(), epic.getId()))
+                    .forEach(subtask -> {
+                        epic.getSubtaskIds().add(subtask.getId());
+                        if (subtask.getEndTime() != null && (endTime.get() == null || endTime.get().isBefore(subtask.getEndTime()))) {
+                            endTime.set(subtask.getEndTime());
+                        }
+                    });
+
+            epic.setEndTime(endTime.get());
+        });
+    }
+
+    private void writeToFile(BufferedWriter writer, Task task) {
+        try {
+            writer.write(TaskConverter.taskInFiletoString(task));
+            writer.newLine();
+        } catch (IOException e) {
+            throw new ManagerSaveException(e.getMessage());
+        }
     }
 }
