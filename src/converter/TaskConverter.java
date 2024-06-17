@@ -11,7 +11,6 @@ public final class TaskConverter {
     public static String taskInFiletoString(Task task) {
         return task.getId() + "," + task.getTaskType() + "," + task.getName() + ","
                 + task.getStatus() + "," + task.getDescription() + "," +
-                (task instanceof Subtask ? ((Subtask) task).getEpicId() : null) + ","
-                + task.getDuration() + "," + task.getStartTime();
+                task.getEpicId() + "," + task.getDuration() + "," + task.getStartTime();
     }
 }

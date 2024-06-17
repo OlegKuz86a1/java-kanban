@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
         TaskManager taskManager = new FileBackedTaskManager(historyManager,
-                Path.of("/home/oem/IdeaProjects/java-kanban/resources/task.csv"));
+                Path.of("resources/task.csv"));
 
         Task task1 = taskManager.create(new Task("Задача № 1", "Описание задачи 1",
                 TaskStatus.NEW, Duration.ofMinutes(15), LocalDateTime.now()));
@@ -41,10 +41,10 @@ public class Main {
                 "описание третьей подзадачи", TaskStatus.IN_PROGRESS,Duration.ofMinutes(15),
                 LocalDateTime.now().plusMinutes(120), epic2));
 
-        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager
-                .loadFromFile(Path.of("/home/oem/IdeaProjects/java-kanban/resources/task.csv"));
-
-        System.out.println(fileBackedTaskManager.getPrioritizedTasks());
+//        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager
+//                .loadFromFile(Path.of("/home/oem/IdeaProjects/java-kanban/resources/task.csv"));
+//
+//        System.out.println(fileBackedTaskManager.getPrioritizedTasks());
 
 
 

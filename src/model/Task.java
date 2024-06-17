@@ -6,8 +6,8 @@ import java.util.Objects;
 
 public class Task {
 
-    private final String name;
-    private final String description;
+    private  String name;
+    private  String description;
     private Integer id;
     protected TaskStatus status;
     private Duration duration;
@@ -42,6 +42,9 @@ public class Task {
         this.description = description;
     }
 
+    public Integer getEpicId() {
+        return null;
+    }
     public Duration getDuration() {
         return duration;
     }

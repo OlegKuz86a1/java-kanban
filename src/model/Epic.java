@@ -17,6 +17,11 @@ public class Epic extends Task {
         super(id, name, description, status, duration, startTime);
     }
 
+    @Override
+    public Integer getEpicId() {
+        return super.getEpicId();
+    }
+
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
