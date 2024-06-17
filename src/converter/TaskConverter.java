@@ -1,6 +1,5 @@
 package converter;
 
-import model.Subtask;
 import model.Task;
 
 public final class TaskConverter {
