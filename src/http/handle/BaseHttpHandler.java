@@ -41,7 +41,7 @@ public abstract class BaseHttpHandler {
     public abstract void get(HttpExchange httpExchange) throws IOException;
 
     public abstract void post(HttpExchange httpExchange) throws IOException;
-    
+
     public abstract void delete(HttpExchange httpExchange) throws IOException;
 
     public void handelAssistant(HttpExchange exchange) throws IOException {
