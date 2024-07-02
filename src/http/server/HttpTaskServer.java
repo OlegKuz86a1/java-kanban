@@ -37,7 +37,7 @@ public class  HttpTaskServer {
     }
 
     public void start() {
-        System.out.println("Started TaskServer \n http://localhost: " + PORT);
+        System.out.println("Started TaskServer\n http://localhost: " + PORT);
          server.start();
     }
 

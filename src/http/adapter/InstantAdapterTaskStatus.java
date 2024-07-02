@@ -11,10 +11,6 @@ public class InstantAdapterTaskStatus extends TypeAdapter<TaskStatus> {
 
     @Override
     public void write(JsonWriter jsonWriter, TaskStatus status) throws IOException {
-        if (status == null) {
-            jsonWriter.value("null");
-            return;
-        }
         jsonWriter.value(status.toString());
     }
 

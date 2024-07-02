@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class InstantAdapterLocalDataTime extends TypeAdapter<LocalDateTime> {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
 
     @Override
     public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
-    if (localDateTime == null) {
-        jsonWriter.value("null");
-        return;
-    }
-    jsonWriter.value(localDateTime.format(formatter));
+        if (localDateTime == null) {
+            jsonWriter.nullValue();
+        } else {
+            jsonWriter.value(localDateTime.format(formatter));
+        }
     }
 
     @Override

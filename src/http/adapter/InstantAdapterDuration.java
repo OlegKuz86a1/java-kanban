@@ -13,12 +13,17 @@ public class InstantAdapterDuration extends TypeAdapter<Duration> {
     public void write(final JsonWriter jsonWriter, final Duration duration) throws IOException {
         if (duration == null) {
             jsonWriter.nullValue();
-        } else
+        } else {
             jsonWriter.value(duration.toMinutes());
+        }
     }
 
     @Override
     public Duration read(final JsonReader jsonReader) throws IOException {
-        return Duration.ofMinutes(Long.parseLong(jsonReader.nextString()));
+        final String text = jsonReader.nextString();
+        if (text.equals("null")) {
+            return null;
+        }
+        return Duration.ofMinutes(Long.parseLong(text));
     }
 }
