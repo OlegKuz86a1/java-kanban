@@ -30,8 +30,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     TreeSet<Task> sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
-
-
     @Override
     public Task create(Task task) {
         validateAndAddToSorted(task, null);
@@ -67,12 +65,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
-
     @Override
     public Epic getByIDEpic(int id) {
         Epic epic = epics.get(id);
         historyManager.add(epic);
         return epic;
+    }
+
+    @Override
+    public Subtask getSubtaskId(int id) {
+        Subtask task = subtasks.get(id);
+        if (task != null) {
+            historyManager.add(task);
+        }
+        return task;
     }
 
     @Override
@@ -84,7 +90,6 @@ public class InMemoryTaskManager implements TaskManager {
         filteredSubtasks.forEach(historyManager::add);
         return filteredSubtasks;
     }
-
 
     @Override
     public List<Task> getAllTasks() {
@@ -213,7 +218,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (addedTask.getStartTime() == null) {
             return;
         }
-        System.out.println(sortedTasks);
         if (sortedTasks.stream().anyMatch(addedTask::doesIntersect)) {
             throw new InvalidTaskException("The task intersects with other tasks");
         }

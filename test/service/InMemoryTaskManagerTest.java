@@ -14,14 +14,11 @@ class InMemoryTaskManagerTest {
 
     TaskManager inMemoryTaskManager;
     HistoryManager historyManager;
-    Managers managers;
-
 
     @BeforeEach
     void beforeEach() {
-        managers = new Managers();
-        historyManager = managers.getDefaultHistory();
-        inMemoryTaskManager = managers.getDefault();
+        historyManager = Managers.getDefaultHistory();
+        inMemoryTaskManager = Managers.getDefault();
     }
 
     @Test

@@ -27,6 +27,8 @@ public interface TaskManager {
 
     List<Subtask> getAllSubtasks();
 
+    Subtask getSubtaskId(int id);
+
     List<Task> getPrioritizedTasks();
 
     void update(Task task);

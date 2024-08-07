@@ -38,7 +38,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-
         if (task == null) {
             return;
         }
@@ -49,7 +48,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         linkLast(task);
         history.put(task.getId(), last);
-
     }
 
     @Override
